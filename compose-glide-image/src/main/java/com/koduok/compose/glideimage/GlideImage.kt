@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -35,9 +35,9 @@ fun GlideImage(
     customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this },
 ) {
     WithConstraints {
-        var image by remember { mutableStateOf<ImageAsset?>(null) }
+        var image by remember { mutableStateOf<ImageBitmap?>(null) }
         var drawable by remember { mutableStateOf<Drawable?>(null) }
-        val context = ContextAmbient.current
+        val context = AmbientContext.current
 
         onCommit(model) {
             val glide = Glide.with(context)
@@ -54,7 +54,7 @@ fun GlideImage(
                         transition: Transition<in Bitmap>?,
                     ) {
                         FrameManager.ensureStarted()
-                        image = resource.asImageAsset()
+                        image = resource.asImageBitmap()
                         onImageReady?.invoke()
                     }
                 }
@@ -96,7 +96,7 @@ fun GlideImage(
 
 @Composable
 private fun ActiveImage(
-    image: ImageAsset?,
+    image: ImageBitmap?,
     drawable: Drawable?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
@@ -106,7 +106,7 @@ private fun ActiveImage(
 ) {
     if (image != null) {
         Image(
-            asset = image,
+            bitmap = image,
             modifier = modifier,
             contentScale = contentScale,
             alignment = alignment,
